@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaListUl } from "react-icons/fa"; // You may need to install react-icons
+import { FaListUl } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image"; // <-- Add this import
 
 function getTimeParts() {
   const now = new Date();
@@ -15,27 +16,8 @@ function getTimeParts() {
 }
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={40}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  // Get time parts for display
+  const { hours, minutes, ampm, day } = getTimeParts();
 
   // Quick tasks state
   const [tasks, setTasks] = useState([

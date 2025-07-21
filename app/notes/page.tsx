@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { FaStickyNote } from "react-icons/fa";
 
 const initialNotes = [
   { label: "Class #1", note: "" },
@@ -27,15 +28,17 @@ export default function NotesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">
       {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-[#a97c50]">Notes</h1>
-        <Link href="/">
-          <button className="px-4 py-2 rounded bg-[#a97c50] text-white font-semibold hover:bg-[#8c653a] transition">
-            Home
-          </button>
-        </Link>
+      <header className="flex flex-col items-center mb-6">
+        <div className="w-full h-20 bg-white/40 rounded-xl mb-2 flex items-center justify-between px-4 shadow">
+          <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center">
+            <FaStickyNote className="text-[#a97c50] text-2xl" />
+          </div>
+          <h1 className="text-3xl font-bold tracking-wide">Notes</h1>
+          <div className="w-10 h-10" /> {/* Spacer */}
+        </div>
+        <div className="w-full h-6 bg-white/60 rounded mb-2" /> {/* Search bar placeholder */}
       </header>
 
       {/* Search Bar */}

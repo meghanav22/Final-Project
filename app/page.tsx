@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaListUl, FaStickyNote, FaCalendarAlt, FaBook, FaRegClock } from "react-icons/fa";
+import { FaListUl, FaStickyNote, FaCalendarAlt, FaBook, FaRegClock, FaHome } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image"; // <-- Add this import
 
@@ -80,7 +80,9 @@ export default function Home() {
       {/* Header */}
       <header className="flex flex-col items-center mb-6">
         <div className="w-full h-20 bg-white/40 rounded-xl mb-2 flex items-center justify-between px-4 shadow">
-          <div className="w-10 h-10 bg-gray-200 rounded" /> {/* Logo placeholder */}
+          <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center">
+            <FaHome className="text-[#a97c50] text-2xl" />
+          </div>
           <h1 className="text-3xl font-bold tracking-wide">Home Page</h1>
           <div className="w-10 h-10" /> {/* Spacer */}
         </div>

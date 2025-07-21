@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { FaCalendarAlt } from "react-icons/fa";
 
 export default function Calendar() {
   const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
@@ -80,15 +81,17 @@ export default function Calendar() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">
       {/* Header */}
       <header className="flex flex-col items-center mb-6">
         <div className="w-full h-20 bg-white/40 rounded-xl mb-2 flex items-center justify-between px-4 shadow">
-          <div className="w-10 h-10 bg-gray-200 rounded" />
+          <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center">
+            <FaCalendarAlt className="text-[#a97c50] text-2xl" />
+          </div>
           <h1 className="text-3xl font-bold tracking-wide">Calendar</h1>
-          <div className="w-10 h-10" />
+          <div className="w-10 h-10" /> {/* Spacer */}
         </div>
-        <div className="w-full h-6 bg-white/60 rounded mb-2" />
+        <div className="w-full h-6 bg-white/60 rounded mb-2" /> {/* Search bar placeholder */}
       </header>
 
       {/* Calendar Grid */}

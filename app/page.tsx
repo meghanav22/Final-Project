@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { FaListUl, FaStickyNote, FaCalendarAlt, FaBook, FaRegClock, FaHome } from "react-icons/fa";
 import Link from "next/link";
-import Image from "next/image"; // <-- Add this import
 
 function getTimeParts() {
   const now = new Date();

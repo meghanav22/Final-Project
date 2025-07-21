@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaListUl } from "react-icons/fa";
+import { FaListUl, FaStickyNote, FaCalendarAlt, FaBook, FaRegClock } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image"; // <-- Add this import
 
@@ -215,28 +215,32 @@ export default function Home() {
             <ul className="space-y-4">
               <li>
                 <Link href="/notes">
-                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition">
+                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition flex items-center gap-2">
+                    <FaStickyNote className="text-xl" />
                     Notes
                   </button>
                 </Link>
               </li>
               <li>
                 <Link href="/calendar">
-                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition">
+                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition flex items-center gap-2">
+                    <FaCalendarAlt className="text-xl" />
                     Calendar
                   </button>
                 </Link>
               </li>
               <li>
                 <Link href="/books-journal">
-                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition">
+                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition flex items-center gap-2">
+                    <FaBook className="text-xl" />
                     Books/Journal
                   </button>
                 </Link>
               </li>
               <li>
                 <Link href="/schedule">
-                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition">
+                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition flex items-center gap-2">
+                    <FaRegClock className="text-xl" />
                     Schedule
                   </button>
                 </Link>

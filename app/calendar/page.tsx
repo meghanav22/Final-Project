@@ -1,7 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
+
+function loadFromStorage<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveToStorage<T>(key: string, value: T) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+}
 
 export default function Calendar() {
   const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
@@ -22,12 +38,13 @@ export default function Calendar() {
   const [newDayTask, setNewDayTask] = useState("");
 
   // State for upcoming/important events
-  const [events, setEvents] = useState<{ text: string; done: boolean }[]>([
-    { text: "Event 1", done: false },
-    { text: "Event 2", done: false },
-    { text: "Event 3", done: false },
-    { text: "Event 4", done: false },
-  ]);
+  const [events, setEvents] = useState<{ text: string; done: boolean }[]>(
+    [
+      { text: "Event 1", done: false },
+      { text: "Event 2", done: false },
+      { text: "Event 3", done: false },
+    ]
+  );
   const [newEvent, setNewEvent] = useState("");
 
   // Add new task to a day
@@ -79,6 +96,26 @@ export default function Calendar() {
   const handleRemoveEvent = (idx: number) => {
     setEvents(events.filter((_, i) => i !== idx));
   };
+
+  useEffect(() => {
+    const storedDayTasks = loadFromStorage<{ [key: number]: { text: string; done: boolean }[] }>("calendarDayTasks", {});
+    setDayTasks(storedDayTasks);
+
+    const storedEvents = loadFromStorage<{ text: string; done: boolean }[]>("calendarEvents", [
+      { text: "Event 1", done: false },
+      { text: "Event 2", done: false },
+      { text: "Event 3", done: false },
+    ]);
+    setEvents(storedEvents);
+  }, []);
+
+  useEffect(() => {
+    saveToStorage("calendarDayTasks", dayTasks);
+  }, [dayTasks]);
+
+  useEffect(() => {
+    saveToStorage("calendarEvents", events);
+  }, [events]);
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">

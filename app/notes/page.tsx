@@ -69,7 +69,7 @@ export default function NotesPage() {
         {/* Images under the header */}
         <div className="flex justify-center gap-8 mb-8">
           <Image
-            src="/bookstore.jpg"
+            src="/Final-Project/bookstore.jpg"
             alt="Bookstore"
             width={160}
             height={160}
@@ -77,7 +77,7 @@ export default function NotesPage() {
             priority
           />
           <Image
-            src="/gg.jpg"
+            src="/Final-Project/gg.jpg"
             alt="GG"
             width={160}
             height={160}
@@ -85,7 +85,7 @@ export default function NotesPage() {
             priority
           />
           <Image
-            src="/rory.jpg"
+            src="/Final-Project/rory.jpg"
             alt="Rory"
             width={160}
             height={160}

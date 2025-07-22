@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { FaRegClock } from "react-icons/fa";
+import Image from "next/image";
 
 function loadFromStorage<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -240,6 +241,20 @@ export default function Schedule() {
           <div className="bg-white/80 rounded-xl h-32 shadow" /> {/* Placeholder box */}
         </section>
       </div>
+
+      {/* Coffee Image Section */}
+      <section className="bg-gray-200 rounded-xl p-4 shadow flex flex-col items-center mb-6">
+        <Image
+          src="/coffee.jpg"
+          alt="Coffee cup"
+          width={120}
+          height={120}
+          className="rounded-lg object-cover mb-2"
+          style={{ maxHeight: 120, width: "auto", height: "auto" }}
+          priority
+        />
+        {/* ...rest of your content for this section... */}
+      </section>
     </div>
   );
 }

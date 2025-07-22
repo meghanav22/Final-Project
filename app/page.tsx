@@ -15,13 +15,16 @@ function getTimeParts() {
 }
 
 function loadFromStorage<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
   try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : fallback;
-  } catch {
-    return fallback;
-  }
+    if (typeof window !== "undefined") {
+      const item = localStorage.getItem(key);
+      if (!item) return fallback;
+      const parsed = JSON.parse(item);
+      if (Array.isArray(parsed) && parsed.length === 0) return fallback;
+      return parsed;
+    }
+  } catch {}
+  return fallback;
 }
 
 function saveToStorage<T>(key: string, value: T) {
@@ -31,10 +34,7 @@ function saveToStorage<T>(key: string, value: T) {
 }
 
 export default function Home() {
-  // Get time parts for display
-  const { hours, minutes, ampm, day } = getTimeParts();
-
-  // Quick tasks state
+  const [timeParts, setTimeParts] = useState(getTimeParts());
   const [tasks, setTasks] = useState(() =>
     loadFromStorage<string[]>("tasks", [
       "Finalise assignment",
@@ -46,7 +46,6 @@ export default function Home() {
   const [newTask, setNewTask] = useState("");
   const [showInput, setShowInput] = useState(false);
 
-  // Class details popup state
   const [showClassDetails, setShowClassDetails] = useState(false);
   const [selectedClass, setSelectedClass] = useState<number | null>(null);
   const [classDetails, setClassDetails] = useState(() =>
@@ -57,17 +56,37 @@ export default function Home() {
       { notes: "" },
     ])
   );
-
-  const [classNames, setClassNames] = useState(() =>
-    loadFromStorage<string[]>("classNames", [
+  const [classNames, setClassNames] = useState(() => {
+    const loaded = loadFromStorage<string[]>("classNames", [
       "Class 1",
       "Class 2",
       "Class 3",
       "Class 4",
-    ])
-  );
+    ]);
+    // If loaded is empty, use fallback
+    return Array.isArray(loaded) && loaded.length === 0
+      ? ["Class 1", "Class 2", "Class 3", "Class 4"]
+      : loaded;
+  });
   const [editingClassIdx, setEditingClassIdx] = useState<number | null>(null);
   const [newClassName, setNewClassName] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => setTimeParts(getTimeParts()), 1000 * 60);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    saveToStorage("tasks", tasks);
+  }, [tasks]);
+
+  useEffect(() => {
+    saveToStorage("classNames", classNames);
+  }, [classNames]);
+
+  useEffect(() => {
+    saveToStorage("classDetails", classDetails);
+  }, [classDetails]);
 
   const handleAddTask = () => {
     if (newTask.trim()) {
@@ -87,7 +106,6 @@ export default function Home() {
     setSelectedClass(null);
   };
 
-  // Handler to update notes for selected class
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (selectedClass !== null) {
       const updated = [...classDetails];
@@ -96,17 +114,7 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    saveToStorage("tasks", tasks);
-  }, [tasks]);
-
-  useEffect(() => {
-    saveToStorage("classNames", classNames);
-  }, [classNames]);
-
-  useEffect(() => {
-    saveToStorage("classDetails", classDetails);
-  }, [classDetails]);
+  const { hours, minutes, ampm, day } = timeParts;
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">
@@ -184,17 +192,28 @@ export default function Home() {
               ))}
             </ul>
           </section>
+          {/* Barnes image below Quick Tasks */}
+          <div className="flex justify-center mt-6">
+            <Image
+              src="/barnes.jpg"
+              alt="Barnes"
+              width={400}
+              height={220}
+              className="rounded-xl shadow object-cover"
+              priority={false}
+            />
+          </div>
         </div>
 
         {/* Center Column - Classes */}
-        <div className="col-span-1 flex flex-col gap-6">
-          <span className="font-semibold text-xl mb-2">Classes</span>
+        <div className="col-span-1 flex flex-col items-center gap-6">
+          <span className="font-semibold text-3xl mb-2">Classes</span>
           {classNames.map((name, idx) => (
             <div
               key={idx}
-              className="bg-white/80 rounded-xl h-24 flex flex-col justify-between shadow text-lg font-medium px-6 relative"
+              className="w-[340px] bg-white/80 rounded-xl h-32 flex flex-col justify-between shadow text-xl font-medium px-8 py-6 relative mb-2"
             >
-              <div className="absolute top-3 left-4">
+              <div className="mb-2">
                 {editingClassIdx === idx ? (
                   <form
                     onSubmit={e => {
@@ -210,7 +229,7 @@ export default function Home() {
                   >
                     <input
                       type="text"
-                      className="border rounded px-2 py-1 text-sm"
+                      className="border rounded px-2 py-1 text-lg w-full"
                       value={newClassName}
                       onChange={e => setNewClassName(e.target.value)}
                       autoFocus
@@ -222,7 +241,7 @@ export default function Home() {
                   </form>
                 ) : (
                   <span
-                    className="text-base font-semibold cursor-pointer"
+                    className="font-semibold cursor-pointer"
                     onClick={() => {
                       setEditingClassIdx(idx);
                       setNewClassName(classNames[idx]);
@@ -234,7 +253,7 @@ export default function Home() {
                 )}
               </div>
               <button
-                className="absolute left-6 bottom-4 px-2 py-1 rounded border border-[#a97c50] text-[#a97c50] bg-transparent text-sm font-semibold hover:bg-[#f5efec] transition"
+                className="self-start px-3 py-1 rounded border border-[#a97c50] text-[#a97c50] bg-transparent text-base font-semibold hover:bg-[#f5efec] transition"
                 onClick={() => handleViewDetails(idx + 1)}
               >
                 Details
@@ -244,9 +263,9 @@ export default function Home() {
         </div>
 
         {/* Right Column - Image */}
-        <div className="col-span-1 flex flex-col gap-6 justify-center items-center">
+        <div className="col-span-1 flex flex-col gap-6 justify-start items-center mt-[52px]">
           <Image
-            src="/Final-Project/study-desk.jpg"
+            src="/study-desk.jpg"
             alt="Study desk with notes, calculator, and laptop"
             width={250}
             height={80}

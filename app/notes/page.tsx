@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { FaStickyNote } from "react-icons/fa";
+import Image from "next/image";
 
 function loadFromStorage<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -49,82 +50,114 @@ export default function NotesPage() {
   }, [notes]);
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">
-      {/* Header */}
-      <header className="flex flex-col items-center mb-6">
-        <div className="w-full h-20 bg-white/40 rounded-xl mb-2 flex items-center justify-between px-4 shadow">
-          <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center">
-            <FaStickyNote className="text-[#a97c50] text-2xl" />
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 flex flex-col items-center justify-center">
+      {/* Header - full width */}
+      <header className="mb-8 w-full flex flex-col items-center">
+        <div className="w-full h-20 bg-white/40 rounded-xl mb-2 flex items-center px-6 shadow">
+          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-6">
+            <FaStickyNote className="text-[#a97c50] text-3xl" />
           </div>
-          <h1 className="text-3xl font-bold tracking-wide">Notes</h1>
-          <div className="w-10 h-10" /> {/* Spacer */}
+          <h1 className="text-5xl font-bold script text-center flex-1">
+            Notes
+          </h1>
         </div>
-        <div className="w-full h-6 bg-white/60 rounded mb-2" /> {/* Search bar placeholder */}
+        <div className="w-full h-6 bg-white/60 rounded mb-2" />
       </header>
 
-      {/* Search Bar */}
-      <div className="w-full max-w-2xl mx-auto mb-8">
-        <input
-          type="text"
-          placeholder="Search notes..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="w-full border rounded-xl px-4 py-2 shadow"
-        />
-      </div>
+      {/* Main content container */}
+      <div className="w-full max-w-3xl flex flex-col items-center">
+        {/* Images under the header */}
+        <div className="flex justify-center gap-8 mb-8">
+          <Image
+            src="/bookstore.jpg"
+            alt="Bookstore"
+            width={160}
+            height={160}
+            className="rounded-xl object-cover shadow"
+            priority
+          />
+          <Image
+            src="/gg.jpg"
+            alt="GG"
+            width={160}
+            height={160}
+            className="rounded-xl object-cover shadow"
+            priority
+          />
+          <Image
+            src="/rory.jpg"
+            alt="Rory"
+            width={160}
+            height={160}
+            className="rounded-xl object-cover shadow"
+            priority
+          />
+        </div>
 
-      {/* Notes List */}
-      <div className="flex flex-col gap-8 max-w-3xl mx-auto">
-        {filteredNotes.map((note, idx) => (
-          <div key={idx} className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              {editingLabelIdx === idx ? (
-                <form
-                  onSubmit={e => {
-                    e.preventDefault();
-                    if (newLabel.trim()) {
-                      const updated = [...notes];
-                      updated[idx].label = newLabel.trim();
-                      setNotes(updated);
-                    }
-                    setEditingLabelIdx(null);
-                    setNewLabel("");
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 text-sm"
-                    value={newLabel}
-                    onChange={e => setNewLabel(e.target.value)}
-                    autoFocus
-                    onBlur={() => {
+        {/* Search Bar */}
+        <div className="w-full max-w-2xl mx-auto mb-8">
+          <input
+            type="text"
+            placeholder="Search notes..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full border rounded-xl px-4 py-2 shadow"
+          />
+        </div>
+
+        {/* Notes List */}
+        <div className="flex flex-col gap-8 w-full items-center">
+          {filteredNotes.map((note, idx) => (
+            <div key={idx} className="mb-6 w-full">
+              <div className="flex items-center gap-2 mb-2">
+                {editingLabelIdx === idx ? (
+                  <form
+                    onSubmit={e => {
+                      e.preventDefault();
+                      if (newLabel.trim()) {
+                        const updated = [...notes];
+                        updated[idx].label = newLabel.trim();
+                        setNotes(updated);
+                      }
                       setEditingLabelIdx(null);
                       setNewLabel("");
                     }}
-                  />
-                </form>
-              ) : (
-                <span
-                  className="font-bold text-lg cursor-pointer"
-                  onClick={() => {
-                    setEditingLabelIdx(idx);
-                    setNewLabel(note.label);
-                  }}
-                  title="Click to edit label"
-                >
-                  {note.label}
-                </span>
-              )}
+                  >
+                    <input
+                      type="text"
+                      className="border rounded px-2 py-1 text-sm"
+                      value={newLabel}
+                      onChange={e => setNewLabel(e.target.value)}
+                      autoFocus
+                      onBlur={() => {
+                        setEditingLabelIdx(null);
+                        setNewLabel("");
+                      }}
+                    />
+                  </form>
+                ) : (
+                  <span
+                    className="font-bold text-lg cursor-pointer"
+                    onClick={() => {
+                      setEditingLabelIdx(idx);
+                      setNewLabel(note.label);
+                    }}
+                    title="Click to edit label"
+                  >
+                    {note.label}
+                  </span>
+                )}
+              </div>
+              <textarea
+                className="w-full border rounded p-2"
+                rows={3}
+                value={note.note}
+                onChange={e => handleNoteChange(idx, e.target.value)}
+                placeholder="Type your note here..."
+              />
             </div>
-            <textarea
-              className="w-full border rounded p-2"
-              rows={3}
-              value={note.note}
-              onChange={e => handleNoteChange(idx, e.target.value)}
-              placeholder="Type your note here..."
-            />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -195,7 +195,7 @@ export default function Home() {
           {/* Barnes image below Quick Tasks */}
           <div className="flex justify-center mt-6">
             <Image
-              src="/barnes.jpg"
+              src="/Final-Project/barnes.jpg"
               alt="Barnes"
               width={400}
               height={220}
@@ -265,7 +265,7 @@ export default function Home() {
         {/* Right Column - Image */}
         <div className="col-span-1 flex flex-col gap-6 justify-start items-center mt-[52px]">
           <Image
-            src="/study-desk.jpg"
+            src="/Final-Project/study-desk.jpg"
             alt="Study desk with notes, calculator, and laptop"
             width={250}
             height={80}

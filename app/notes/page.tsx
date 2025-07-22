@@ -1,18 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaStickyNote } from "react-icons/fa";
 
-const initialNotes = [
-  { label: "Class #1", note: "" },
-  { label: "Class #2", note: "" },
-  { label: "Class #3", note: "" },
-  { label: "General", note: "" },
-];
+function loadFromStorage<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveToStorage<T>(key: string, value: T) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+}
 
 export default function NotesPage() {
-  const [notes, setNotes] = useState(initialNotes);
+  const [notes, setNotes] = useState(() =>
+    loadFromStorage<{ label: string; note: string }[]>("notes", [
+      { label: "Class #1", note: "" },
+      { label: "Class #2", note: "" },
+      { label: "Class #3", note: "" },
+      { label: "General", note: "" },
+    ])
+  );
   const [search, setSearch] = useState("");
+  const [editingLabelIdx, setEditingLabelIdx] = useState<number | null>(null);
+  const [newLabel, setNewLabel] = useState("");
 
   const handleNoteChange = (idx: number, value: string) => {
     setNotes(notes =>
@@ -25,6 +43,10 @@ export default function NotesPage() {
     n.label.toLowerCase().includes(search.toLowerCase()) ||
     n.note.toLowerCase().includes(search.toLowerCase())
   );
+
+  useEffect(() => {
+    saveToStorage("notes", notes);
+  }, [notes]);
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">
@@ -53,20 +75,54 @@ export default function NotesPage() {
 
       {/* Notes List */}
       <div className="flex flex-col gap-8 max-w-3xl mx-auto">
-        {filteredNotes.map((item, idx) => (
-          <div key={idx} className="flex gap-4 items-start bg-white/80 rounded-xl shadow p-4">
-            <div className="w-20 h-20 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-3xl shrink-0">
-              📝
+        {filteredNotes.map((note, idx) => (
+          <div key={idx} className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              {editingLabelIdx === idx ? (
+                <form
+                  onSubmit={e => {
+                    e.preventDefault();
+                    if (newLabel.trim()) {
+                      const updated = [...notes];
+                      updated[idx].label = newLabel.trim();
+                      setNotes(updated);
+                    }
+                    setEditingLabelIdx(null);
+                    setNewLabel("");
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="border rounded px-2 py-1 text-sm"
+                    value={newLabel}
+                    onChange={e => setNewLabel(e.target.value)}
+                    autoFocus
+                    onBlur={() => {
+                      setEditingLabelIdx(null);
+                      setNewLabel("");
+                    }}
+                  />
+                </form>
+              ) : (
+                <span
+                  className="font-bold text-lg cursor-pointer"
+                  onClick={() => {
+                    setEditingLabelIdx(idx);
+                    setNewLabel(note.label);
+                  }}
+                  title="Click to edit label"
+                >
+                  {note.label}
+                </span>
+              )}
             </div>
-            <div className="flex-1">
-              <div className="font-bold mb-2">{item.label}</div>
-              <textarea
-                className="w-full border rounded-xl p-3 shadow min-h-[60px]"
-                placeholder={`Write notes for ${item.label.toLowerCase()}...`}
-                value={item.note}
-                onChange={e => handleNoteChange(idx, e.target.value)}
-              />
-            </div>
+            <textarea
+              className="w-full border rounded p-2"
+              rows={3}
+              value={note.note}
+              onChange={e => handleNoteChange(idx, e.target.value)}
+              placeholder="Type your note here..."
+            />
           </div>
         ))}
       </div>

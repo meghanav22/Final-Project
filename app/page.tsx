@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { FaListUl, FaStickyNote, FaCalendarAlt, FaBook, FaRegClock, FaHome } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image";
 
 function getTimeParts() {
   const now = new Date();
@@ -122,7 +123,7 @@ export default function Home() {
         <div className="w-full h-6 bg-white/60 rounded mb-2" /> {/* Search bar placeholder */}
       </header>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-3 gap-6">
         {/* Left Column */}
         <div className="col-span-1 flex flex-col gap-6">
           {/* Time + Date */}
@@ -187,7 +188,7 @@ export default function Home() {
         </div>
 
         {/* Center Column - Classes */}
-        <div className="col-span-2 flex flex-col gap-6">
+        <div className="col-span-1 flex flex-col gap-6">
           <span className="font-semibold text-xl mb-2">Classes</span>
           {classNames.map((name, idx) => (
             <div
@@ -243,45 +244,16 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Right Column - Navigation Bar */}
-        <div className="col-span-1 flex flex-col gap-6">
-          <section className="bg-white/80 rounded-xl p-4 shadow">
-            <span className="font-semibold text-xl mb-4 block">Navigation</span>
-            <ul className="space-y-4">
-              <li>
-                <Link href="/notes">
-                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition flex items-center gap-2">
-                    <FaStickyNote className="text-xl" />
-                    Notes
-                  </button>
-                </Link>
-              </li>
-              <li>
-                <Link href="/calendar">
-                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition flex items-center gap-2">
-                    <FaCalendarAlt className="text-xl" />
-                    Calendar
-                  </button>
-                </Link>
-              </li>
-              <li>
-                <Link href="/books-journal">
-                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition flex items-center gap-2">
-                    <FaBook className="text-xl" />
-                    Books/Journal
-                  </button>
-                </Link>
-              </li>
-              <li>
-                <Link href="/schedule">
-                  <button className="w-full text-left px-4 py-2 rounded bg-[#f5efec] text-[#a97c50] font-semibold hover:bg-[#f7e8d7] transition flex items-center gap-2">
-                    <FaRegClock className="text-xl" />
-                    Schedule
-                  </button>
-                </Link>
-              </li>
-            </ul>
-          </section>
+        {/* Right Column - Image */}
+        <div className="col-span-1 flex flex-col gap-6 justify-center items-center">
+          <Image
+            src="/study-desk.jpg"
+            alt="Study desk with notes, calculator, and laptop"
+            width={250}
+            height={80}
+            className="rounded-lg shadow"
+            priority
+          />
         </div>
       </div>
 

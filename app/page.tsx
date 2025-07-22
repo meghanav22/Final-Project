@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { FaListUl, FaHome } from "react-icons/fa";
-
 import Image from "next/image";
 
 function getTimeParts() {
@@ -247,7 +246,7 @@ export default function Home() {
         {/* Right Column - Image */}
         <div className="col-span-1 flex flex-col gap-6 justify-center items-center">
           <Image
-            src="/study-desk.jpg"
+            src="/Final-Project/study-desk.jpg"
             alt="Study desk with notes, calculator, and laptop"
             width={250}
             height={80}

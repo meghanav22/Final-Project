@@ -210,7 +210,15 @@ export default function Schedule() {
               Add
             </button>
           </div>
-          <div className="bg-white/80 rounded-xl h-32 shadow" /> {/* Placeholder box */}
+          <div className="bg-gray-200 rounded-xl h-56 shadow flex items-center justify-center relative overflow-hidden">
+            <Image
+              src="/coffee.jpg"
+              alt="Coffee cup"
+              fill
+              className="object-cover rounded-xl"
+              priority
+            />
+          </div>
         </section>
         {/* Weekly Events */}
         <section>
@@ -238,23 +246,17 @@ export default function Schedule() {
               Add
             </button>
           </div>
-          <div className="bg-white/80 rounded-xl h-32 shadow" /> {/* Placeholder box */}
+          <div className="bg-gray-200 rounded-xl h-56 shadow flex items-center justify-center relative overflow-hidden">
+            <Image
+              src="/library.jpg"
+              alt="Library"
+              fill
+              className="object-cover rounded-xl"
+              priority
+            />
+          </div>
         </section>
       </div>
-
-      {/* Coffee Image Section */}
-      <section className="bg-gray-200 rounded-xl p-4 shadow flex flex-col items-center mb-6">
-        <Image
-          src="/coffee.jpg"
-          alt="Coffee cup"
-          width={120}
-          height={120}
-          className="rounded-lg object-cover mb-2"
-          style={{ maxHeight: 120, width: "auto", height: "auto" }}
-          priority
-        />
-        {/* ...rest of your content for this section... */}
-      </section>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaListUl, FaStickyNote, FaCalendarAlt, FaBook, FaRegClock, FaHome } from "react-icons/fa";
 import Link from "next/link";
 
@@ -14,36 +14,58 @@ function getTimeParts() {
   return { hours: hours.toString().padStart(2, "0"), minutes, ampm, day };
 }
 
+function loadFromStorage<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveToStorage<T>(key: string, value: T) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+}
+
 export default function Home() {
   // Get time parts for display
   const { hours, minutes, ampm, day } = getTimeParts();
 
   // Quick tasks state
-  const [tasks, setTasks] = useState([
-    "Finalise assignment",
-    "Practice speech",
-    "Print papers",
-    "Catch up",
-  ]);
+  const [tasks, setTasks] = useState(() =>
+    loadFromStorage<string[]>("tasks", [
+      "Finalise assignment",
+      "Practice speech",
+      "Print papers",
+      "Catch up",
+    ])
+  );
   const [newTask, setNewTask] = useState("");
   const [showInput, setShowInput] = useState(false);
 
   // Class details popup state
   const [showClassDetails, setShowClassDetails] = useState(false);
   const [selectedClass, setSelectedClass] = useState<number | null>(null);
-  const [classDetails, setClassDetails] = useState([
-    { notes: "" },
-    { notes: "" },
-    { notes: "" },
-    { notes: "" },
-  ]);
+  const [classDetails, setClassDetails] = useState(() =>
+    loadFromStorage<{ notes: string }[]>("classDetails", [
+      { notes: "" },
+      { notes: "" },
+      { notes: "" },
+      { notes: "" },
+    ])
+  );
 
-  const [classNames, setClassNames] = useState([
-    "Class 1",
-    "Class 2",
-    "Class 3",
-    "Class 4",
-  ]);
+  const [classNames, setClassNames] = useState(() =>
+    loadFromStorage<string[]>("classNames", [
+      "Class 1",
+      "Class 2",
+      "Class 3",
+      "Class 4",
+    ])
+  );
   const [editingClassIdx, setEditingClassIdx] = useState<number | null>(null);
   const [newClassName, setNewClassName] = useState("");
 
@@ -73,6 +95,18 @@ export default function Home() {
       setClassDetails(updated);
     }
   };
+
+  useEffect(() => {
+    saveToStorage("tasks", tasks);
+  }, [tasks]);
+
+  useEffect(() => {
+    saveToStorage("classNames", classNames);
+  }, [classNames]);
+
+  useEffect(() => {
+    saveToStorage("classDetails", classDetails);
+  }, [classDetails]);
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">

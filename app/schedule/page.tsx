@@ -1,11 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaRegClock } from "react-icons/fa";
+
+function loadFromStorage<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveToStorage<T>(key: string, value: T) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+}
 
 export default function Schedule() {
   const days = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"];
-  // FIX: Use Array.from to create unique arrays for each day
   const [dayTasks, setDayTasks] = useState<string[][]>(
     Array.from({ length: 7 }, () => [])
   );
@@ -19,6 +34,42 @@ export default function Schedule() {
     ["Event 1", "Event 2", "Event 3"]
   );
   const [newEvent, setNewEvent] = useState("");
+
+  // Load initial data from storage
+  useEffect(() => {
+    setReminders(
+      loadFromStorage<string[]>("scheduleReminders", [
+        "Reminder 1",
+        "Reminder 2",
+        "Reminder 3",
+      ])
+    );
+    setEvents(
+      loadFromStorage<string[]>("scheduleEvents", [
+        "Event 1",
+        "Event 2",
+        "Event 3",
+      ])
+    );
+    setDayTasks(
+      loadFromStorage<string[][]>("scheduleDayTasks", Array.from({ length: 7 }, () => []))
+    );
+  }, []);
+
+  // Save reminders to storage
+  useEffect(() => {
+    saveToStorage("scheduleReminders", reminders);
+  }, [reminders]);
+
+  // Save events to storage
+  useEffect(() => {
+    saveToStorage("scheduleEvents", events);
+  }, [events]);
+
+  // Save day tasks to storage
+  useEffect(() => {
+    saveToStorage("scheduleDayTasks", dayTasks);
+  }, [dayTasks]);
 
   // Add new reminder
   const handleAddReminder = () => {

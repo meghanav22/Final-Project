@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FaListUl, FaStickyNote, FaCalendarAlt, FaBook, FaRegClock, FaHome } from "react-icons/fa";
-import Link from "next/link";
+import { FaListUl, FaHome } from "react-icons/fa";
+
 import Image from "next/image";
 
 function getTimeParts() {

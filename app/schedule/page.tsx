@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { FaRegClock } from "react-icons/fa";
 
 export default function Schedule() {
   const days = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"];
@@ -58,7 +59,9 @@ export default function Schedule() {
       {/* Header */}
       <header className="flex flex-col items-center mb-6">
         <div className="w-full h-20 bg-white/40 rounded-xl mb-2 flex items-center justify-between px-4 shadow">
-          <div className="w-10 h-10 bg-gray-200 rounded" /> {/* Logo placeholder */}
+          <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center">
+            <FaRegClock className="text-[#a97c50] text-2xl" />
+          </div>
           <h1 className="text-3xl font-bold tracking-wide">Schedule</h1>
           <div className="w-10 h-10" /> {/* Spacer */}
         </div>

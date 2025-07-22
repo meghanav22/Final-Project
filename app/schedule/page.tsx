@@ -212,7 +212,7 @@ export default function Schedule() {
           </div>
           <div className="bg-gray-200 rounded-xl h-56 shadow flex items-center justify-center relative overflow-hidden">
             <Image
-              src="/coffee.jpg"
+              src="/Final-Project/coffee.jpg"
               alt="Coffee cup"
               fill
               className="object-cover rounded-xl"
@@ -248,7 +248,7 @@ export default function Schedule() {
           </div>
           <div className="bg-gray-200 rounded-xl h-56 shadow flex items-center justify-center relative overflow-hidden">
             <Image
-              src="/library.jpg"
+              src="/Final-Project/library.jpg"
               alt="Library"
               fill
               className="object-cover rounded-xl"

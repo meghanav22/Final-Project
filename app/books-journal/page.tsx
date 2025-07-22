@@ -33,15 +33,29 @@ export default function BooksJournal() {
   const [books, setBooks] = useState(() =>
     loadFromStorage("books", initialBooks)
   );
-  const [journal, setJournal] = useState("");
+
+  // --- Journal Entries State ---
+  const [journalEntries, setJournalEntries] = useState(() =>
+    loadFromStorage<{ date: string; text: string }[]>("journalEntries", [])
+  );
+  const [journalText, setJournalText] = useState("");
+
+  // For editing book titles
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   // Save books to localStorage whenever they change
   useEffect(() => {
     saveToStorage("books", books);
   }, [books]);
+
+  // Save journal entries to localStorage whenever they change
+  useEffect(() => {
+    saveToStorage("journalEntries", journalEntries);
+  }, [journalEntries]);
 
   const handleFinishedChange = (idx: number) => {
     setBooks((books) =>
@@ -95,6 +109,21 @@ export default function BooksJournal() {
     reader.readAsDataURL(file);
   };
 
+  // --- Journal Handlers ---
+  const handleAddJournalEntry = () => {
+    if (journalText.trim()) {
+      setJournalEntries([
+        { date: new Date().toLocaleString(), text: journalText.trim() },
+        ...journalEntries,
+      ]);
+      setJournalText("");
+    }
+  };
+
+  const handleDeleteJournalEntry = (idx: number) => {
+    setJournalEntries(journalEntries.filter((_, i) => i !== idx));
+  };
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">
       {/* Header */}
@@ -121,124 +150,161 @@ export default function BooksJournal() {
       {/* Reading List */}
       <section className="mb-10">
         <h2 className="text-2xl font-semibold mb-4">Reading List</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {books.map((book, idx) => (
-            <div
-              key={idx}
-              className="bg-white/80 rounded-xl shadow p-4 flex flex-col items-center relative"
-            >
+        {mounted && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {books.map((book, idx) => (
               <div
-                className="w-24 h-32 bg-gray-200 rounded mb-3 flex items-center justify-center text-gray-400 text-2xl cursor-pointer overflow-hidden group"
-                title="Click to upload book cover"
-                onClick={() => handleBookIconClick(idx)}
-                style={{ position: "relative" }}
+                key={idx}
+                className="bg-white/80 rounded-xl shadow p-4 flex flex-col items-center relative"
               >
-                {book.cover ? (
-                  <img
-                    src={book.cover}
-                    alt="Book cover"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <FaBook className="text-4xl text-[#a97c50] group-hover:opacity-60 transition" />
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  ref={el => (fileInputRefs.current[idx] = el)}
-                  onChange={e => handleCoverChange(idx, e)}
-                />
-                {!book.cover && (
-                  <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-[#a97c50] opacity-80 group-hover:underline">
-                    Upload
-                  </span>
-                )}
-              </div>
-              <div className="font-bold mb-2 w-full flex items-center justify-center">
-                {editingIdx === idx ? (
-                  <form
-                    className="flex w-full gap-2"
-                    onSubmit={e => {
-                      e.preventDefault();
-                      handleEditBookSubmit(idx);
-                    }}
-                  >
-                    <input
-                      type="text"
-                      className="border rounded px-2 py-1 text-base flex-1"
-                      value={editTitle}
-                      onChange={e => setEditTitle(e.target.value)}
-                      autoFocus
-                      onBlur={() => setEditingIdx(null)}
-                    />
-                    <button
-                      type="submit"
-                      className="px-2 py-1 bg-[#a97c50] text-white rounded hover:bg-[#8c653a] transition"
-                    >
-                      Save
-                    </button>
-                  </form>
-                ) : (
-                  <>
-                    <span>{book.title}</span>
-                    <button
-                      className="ml-2 text-[#a97c50] hover:text-[#8c653a] text-base"
-                      title="Edit book title"
-                      onClick={() => handleEditBook(idx)}
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      className="ml-2 text-red-500 hover:text-red-700 text-base"
-                      title="Delete book"
-                      onClick={() => handleDeleteBook(idx)}
-                    >
-                      ×
-                    </button>
-                  </>
-                )}
-              </div>
-              <label className="flex items-center gap-2 mb-2">
-                <input
-                  type="checkbox"
-                  checked={book.finished}
-                  onChange={() => handleFinishedChange(idx)}
-                  className="accent-[#a97c50] w-5 h-5"
-                />
-                <span className="text-sm">Finished!</span>
-              </label>
-              <div className="flex items-center gap-1">
-                <span className="text-sm">Rating:</span>
-                <select
-                  value={book.rating}
-                  onChange={e =>
-                    handleRatingChange(idx, Number(e.target.value))
-                  }
-                  className="border rounded px-1 py-0.5 text-sm"
+                <div
+                  className="w-24 h-32 bg-gray-200 rounded mb-3 flex items-center justify-center text-gray-400 text-2xl cursor-pointer overflow-hidden group"
+                  title="Click to upload book cover"
+                  onClick={() => handleBookIconClick(idx)}
+                  style={{ position: "relative" }}
                 >
-                  <option value={0}>/5</option>
-                  {[1, 2, 3, 4, 5].map(n => (
-                    <option key={n} value={n}>
-                      {n}/5
-                    </option>
-                  ))}
-                </select>
+                  {book.cover ? (
+                    <img
+                      src={book.cover}
+                      alt="Book cover"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <FaBook className="text-4xl text-[#a97c50] group-hover:opacity-60 transition" />
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    ref={el => {
+                      fileInputRefs.current[idx] = el;
+                    }}
+                    onChange={e => handleCoverChange(idx, e)}
+                  />
+                  {!book.cover && (
+                    <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-[#a97c50] opacity-80 group-hover:underline">
+                      Upload
+                    </span>
+                  )}
+                </div>
+                <div className="font-bold mb-2 w-full flex items-center justify-center">
+                  {editingIdx === idx ? (
+                    <form
+                      className="flex w-full gap-2"
+                      onSubmit={e => {
+                        e.preventDefault();
+                        handleEditBookSubmit(idx);
+                      }}
+                    >
+                      <input
+                        type="text"
+                        className="border rounded px-2 py-1 text-base flex-1"
+                        value={editTitle}
+                        onChange={e => setEditTitle(e.target.value)}
+                        autoFocus
+                        onBlur={() => setEditingIdx(null)}
+                      />
+                      <button
+                        type="submit"
+                        className="px-2 py-1 bg-[#a97c50] text-white rounded hover:bg-[#8c653a] transition"
+                      >
+                        Save
+                      </button>
+                    </form>
+                  ) : (
+                    <>
+                      <span>{book.title}</span>
+                      <button
+                        className="ml-2 text-[#a97c50] hover:text-[#8c653a] text-base"
+                        title="Edit book title"
+                        onClick={() => handleEditBook(idx)}
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        className="ml-2 text-red-500 hover:text-red-700 text-base"
+                        title="Delete book"
+                        onClick={() => handleDeleteBook(idx)}
+                      >
+                        ×
+                      </button>
+                    </>
+                  )}
+                </div>
+                <label className="flex items-center gap-2 mb-2">
+                  <input
+                    type="checkbox"
+                    checked={book.finished}
+                    onChange={() => handleFinishedChange(idx)}
+                    className="accent-[#a97c50] w-5 h-5"
+                  />
+                  <span className="text-sm">Finished!</span>
+                </label>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm">Rating:</span>
+                  <select
+                    value={book.rating}
+                    onChange={e =>
+                      handleRatingChange(idx, Number(e.target.value))
+                    }
+                    className="border rounded px-1 py-0.5 text-sm"
+                  >
+                    <option value={0}>/5</option>
+                    {[1, 2, 3, 4, 5].map(n => (
+                      <option key={n} value={n}>
+                        {n}/5
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Journal */}
       <section>
         <h2 className="text-2xl font-semibold mb-4">Journal</h2>
-        <textarea
-          className="w-full max-w-3xl border rounded-xl p-4 shadow min-h-[120px]"
-          placeholder="Write your journal entry here..."
-          value={journal}
-          onChange={e => setJournal(e.target.value)}
-        />
+        <div className="flex flex-col gap-4 max-w-3xl">
+          <textarea
+            className="w-full border rounded-xl p-4 shadow min-h-[80px]"
+            placeholder="Write your journal entry here..."
+            value={journalText}
+            onChange={e => setJournalText(e.target.value)}
+          />
+          <button
+            className="self-end px-4 py-2 rounded bg-[#a97c50] text-white font-semibold hover:bg-[#8c653a] transition"
+            onClick={handleAddJournalEntry}
+            disabled={!journalText.trim()}
+          >
+            Add Entry
+          </button>
+        </div>
+        <div className="mt-8 flex flex-col gap-6 max-w-3xl">
+          {mounted ? (
+            journalEntries.length === 0 ? (
+              <div className="text-gray-500">No journal entries yet.</div>
+            ) : (
+              journalEntries.map((entry, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white/80 rounded-xl shadow p-4 flex flex-col relative"
+                >
+                  <div className="text-xs text-gray-500 mb-2">{entry.date}</div>
+                  <div className="whitespace-pre-line mb-2">{entry.text}</div>
+                  <button
+                    className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-lg"
+                    title="Delete entry"
+                    onClick={() => handleDeleteJournalEntry(idx)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))
+            )
+          ) : null}
+        </div>
       </section>
     </div>
   );

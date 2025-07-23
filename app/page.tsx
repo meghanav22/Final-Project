@@ -71,6 +71,9 @@ export default function Home() {
   const [editingClassIdx, setEditingClassIdx] = useState<number | null>(null);
   const [newClassName, setNewClassName] = useState("");
 
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupClosing, setPopupClosing] = useState(false);
+
   useEffect(() => {
     const interval = setInterval(() => setTimeParts(getTimeParts()), 1000 * 60);
     return () => clearInterval(interval);
@@ -98,12 +101,19 @@ export default function Home() {
 
   const handleViewDetails = (num: number) => {
     setSelectedClass(num);
+    setPopupVisible(true);
     setShowClassDetails(true);
+    setPopupClosing(false);
   };
 
   const handleCloseDetails = () => {
-    setShowClassDetails(false);
-    setSelectedClass(null);
+    setPopupClosing(true);
+    setTimeout(() => {
+      setShowClassDetails(false);
+      setPopupVisible(false);
+      setSelectedClass(null);
+      setPopupClosing(false);
+    }, 300); // match animation duration
   };
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -277,9 +287,21 @@ export default function Home() {
 
       {/* Class Details Popup */}
       {showClassDetails && selectedClass !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-4 md:p-8 shadow-lg min-w-[260px] md:min-w-[300px] max-w-[95vw]">
-            <h2 className="text-xl md:text-2xl font-bold mb-4 text-[#a97c50]">Class {selectedClass} Details</h2>
+        <div
+          className={`fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 transition-opacity duration-300 ${
+            popupClosing ? "animate-fadeOutBg" : ""
+          }`}
+          style={!popupClosing ? { animation: "fadeInBg 0.3s" } : {}}
+        >
+          <div
+            className={`bg-white rounded-xl p-4 md:p-8 shadow-lg min-w-[260px] md:min-w-[300px] max-w-[95vw] transform transition-all duration-300 ${
+              popupClosing ? "animate-slideDownPopup" : ""
+            }`}
+            style={!popupClosing ? { animation: "slideUpPopup 0.3s" } : {}}
+          >
+            <h2 className="text-xl md:text-2xl font-bold mb-4 text-[#a97c50]">
+              Class {selectedClass} Details
+            </h2>
             <label className="block mb-2 font-semibold text-[#a97c50]">Notes:</label>
             <textarea
               className="w-full border rounded p-2 mb-6"
@@ -295,6 +317,24 @@ export default function Home() {
               Close
             </button>
           </div>
+          <style jsx global>{`
+            @keyframes fadeInBg {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+            @keyframes slideUpPopup {
+              from { transform: translateY(40px) scale(0.98); opacity: 0; }
+              to { transform: translateY(0) scale(1); opacity: 1; }
+            }
+            @keyframes fadeOutBg {
+              from { opacity: 1; }
+              to { opacity: 0; }
+            }
+            @keyframes slideDownPopup {
+              from { transform: translateY(0) scale(1); opacity: 1; }
+              to { transform: translateY(40px) scale(0.98); opacity: 0; }
+            }
+          `}</style>
         </div>
       )}
     </div>

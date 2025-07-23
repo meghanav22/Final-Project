@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaRegClock } from "react-icons/fa";
 import Image from "next/image";
 
@@ -35,6 +35,14 @@ export default function Schedule() {
     ["Event 1", "Event 2", "Event 3"]
   );
   const [newEvent, setNewEvent] = useState("");
+  const [notification, setNotification] = useState<string | null>(null);
+  const notificationTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const showNotification = (msg: string) => {
+    setNotification(msg);
+    if (notificationTimeout.current) clearTimeout(notificationTimeout.current);
+    notificationTimeout.current = setTimeout(() => setNotification(null), 1800);
+  };
 
   // Load initial data from storage
   useEffect(() => {
@@ -77,6 +85,7 @@ export default function Schedule() {
     if (newReminder.trim()) {
       setReminders([...reminders, newReminder.trim()]);
       setNewReminder("");
+      showNotification("Reminder added!");
     }
   };
 
@@ -85,6 +94,7 @@ export default function Schedule() {
     if (newEvent.trim()) {
       setEvents([...events, newEvent.trim()]);
       setNewEvent("");
+      showNotification("Event added!");
     }
   };
 
@@ -96,6 +106,7 @@ export default function Schedule() {
       setDayTasks(updated);
       setNewDayTask("");
       setEditingDay(null);
+      showNotification("Task added!");
     }
   };
 
@@ -104,6 +115,17 @@ export default function Schedule() {
     const updated = [...dayTasks];
     updated[dayIdx] = updated[dayIdx].filter((_, i) => i !== taskIdx);
     setDayTasks(updated);
+    showNotification("Task deleted!");
+  };
+
+  const handleDeleteReminder = (idx: number) => {
+    setReminders(reminders.filter((_, i) => i !== idx));
+    showNotification("Reminder deleted!");
+  };
+
+  const handleDeleteEvent = (idx: number) => {
+    setEvents(events.filter((_, i) => i !== idx));
+    showNotification("Event deleted!");
   };
 
   return (
@@ -192,6 +214,13 @@ export default function Schedule() {
               <li key={idx} className="flex items-center gap-2 text-lg">
                 <input type="checkbox" className="w-5 h-5 accent-[#a97c50]" />
                 <span>{reminder}</span>
+                <button
+                  className="ml-2 text-red-500 hover:text-red-700 font-bold text-xl"
+                  title="Delete reminder"
+                  onClick={() => handleDeleteReminder(idx)}
+                >
+                  ×
+                </button>
               </li>
             ))}
           </ul>
@@ -228,6 +257,13 @@ export default function Schedule() {
               <li key={idx} className="flex items-center gap-2 text-lg">
                 <input type="checkbox" className="w-5 h-5 accent-[#a97c50]" />
                 <span>{event}</span>
+                <button
+                  className="ml-2 text-red-500 hover:text-red-700 font-bold text-xl"
+                  title="Delete event"
+                  onClick={() => handleDeleteEvent(idx)}
+                >
+                  ×
+                </button>
               </li>
             ))}
           </ul>
@@ -257,6 +293,22 @@ export default function Schedule() {
           </div>
         </section>
       </div>
+
+      {/* Notification Popup */}
+      {notification && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#a97c50] text-white px-4 py-2 rounded shadow-lg z-[9999] transition-all animate-fadeIn">
+          {notification}
+          <style jsx global>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(20px);}
+              to { opacity: 1; transform: translateY(0);}
+            }
+            .animate-fadeIn {
+              animation: fadeIn 0.4s;
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

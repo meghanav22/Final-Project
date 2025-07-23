@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 
 function loadFromStorage<T>(key: string, fallback: T): T {
@@ -47,6 +47,16 @@ export default function Calendar() {
   );
   const [newEvent, setNewEvent] = useState("");
 
+  // State for notifications
+  const [notification, setNotification] = useState<string | null>(null);
+  const notificationTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const showNotification = (msg: string) => {
+    setNotification(msg);
+    if (notificationTimeout.current) clearTimeout(notificationTimeout.current);
+    notificationTimeout.current = setTimeout(() => setNotification(null), 1800);
+  };
+
   // Add new task to a day
   const handleAddDayTask = (day: number) => {
     if (newDayTask.trim()) {
@@ -56,6 +66,7 @@ export default function Calendar() {
       }));
       setNewDayTask("");
       setEditingDay(null);
+      showNotification("Task added!");
     }
   };
 
@@ -75,6 +86,7 @@ export default function Calendar() {
       ...prev,
       [day]: prev[day].filter((_, i) => i !== idx),
     }));
+    showNotification("Task deleted!");
   };
 
   // Add new event
@@ -82,6 +94,7 @@ export default function Calendar() {
     if (newEvent.trim()) {
       setEvents([...events, { text: newEvent.trim(), done: false }]);
       setNewEvent("");
+      showNotification("Event added!");
     }
   };
 
@@ -95,6 +108,7 @@ export default function Calendar() {
   // Remove event
   const handleRemoveEvent = (idx: number) => {
     setEvents(events.filter((_, i) => i !== idx));
+    showNotification("Event deleted!");
   };
 
   useEffect(() => {
@@ -247,6 +261,22 @@ export default function Calendar() {
           </button>
         </div>
       </section>
+
+      {/* Notification Popup */}
+      {notification && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#a97c50] text-white px-4 py-2 rounded shadow-lg z-[9999] transition-all animate-fadeIn">
+          {notification}
+          <style jsx global>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(20px);}
+              to { opacity: 1; transform: translateY(0);}
+            }
+            .animate-fadeIn {
+              animation: fadeIn 0.4s;
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

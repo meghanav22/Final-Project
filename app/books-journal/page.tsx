@@ -52,6 +52,10 @@ export default function BooksJournal() {
   const [showAddBook, setShowAddBook] = useState(false);
   const [newBookTitle, setNewBookTitle] = useState("");
 
+  // Notification state
+  const [notification, setNotification] = useState<string | null>(null);
+  const notificationTimeout = useRef<NodeJS.Timeout | null>(null);
+
   // Save books to localStorage whenever they change
   useEffect(() => {
     saveToStorage("books", books);
@@ -61,6 +65,12 @@ export default function BooksJournal() {
   useEffect(() => {
     saveToStorage("journalEntries", journalEntries);
   }, [journalEntries]);
+
+  const showNotification = (msg: string) => {
+    setNotification(msg);
+    if (notificationTimeout.current) clearTimeout(notificationTimeout.current);
+    notificationTimeout.current = setTimeout(() => setNotification(null), 1800);
+  };
 
   const handleFinishedChange = (idx: number) => {
     setBooks((books) =>
@@ -76,6 +86,7 @@ export default function BooksJournal() {
 
   const handleDeleteBook = (idx: number) => {
     setBooks((books) => books.filter((_, i) => i !== idx));
+    showNotification("Book deleted!");
   };
 
   const handleEditBook = (idx: number) => {
@@ -138,6 +149,7 @@ export default function BooksJournal() {
       ]);
       setNewBookTitle("");
       setShowAddBook(false);
+      showNotification("Book added!");
     }
   };
 
@@ -366,6 +378,22 @@ export default function BooksJournal() {
           ) : null}
         </div>
       </section>
+
+      {/* Notification Popup */}
+      {notification && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#a97c50] text-white px-4 py-2 rounded shadow-lg z-[9999] transition-all animate-fadeIn">
+          {notification}
+          <style jsx global>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(20px);}
+              to { opacity: 1; transform: translateY(0);}
+            }
+            .animate-fadeIn {
+              animation: fadeIn 0.4s;
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

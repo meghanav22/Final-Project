@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaListUl, FaHome } from "react-icons/fa";
 import Image from "next/image";
 import { Mirage } from "ldrs/react";
@@ -75,6 +75,14 @@ export default function Home() {
 
   const [popupClosing, setPopupClosing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
+  const notificationTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const showNotification = (msg: string) => {
+    setNotification(msg);
+    if (notificationTimeout.current) clearTimeout(notificationTimeout.current);
+    notificationTimeout.current = setTimeout(() => setNotification(null), 1800);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => setTimeParts(getTimeParts()), 1000 * 60);
@@ -109,6 +117,7 @@ export default function Home() {
         setNewTask("");
         setShowInput(false);
         setLoading(false);
+        showNotification("Task added!");
       }, 600); // simulate loading
     }
   };
@@ -138,6 +147,11 @@ export default function Home() {
       updated[selectedClass - 1].notes = e.target.value;
       setClassDetails(updated);
     }
+  };
+
+  const handleDeleteTask = (idx: number) => {
+    setTasks(tasks.filter((_, i) => i !== idx));
+    showNotification("Task deleted!");
   };
 
   const { hours, minutes, ampm, day } = timeParts;
@@ -217,9 +231,7 @@ export default function Home() {
                   <button
                     className="ml-2 text-red-500 hover:text-red-700 font-bold text-xl"
                     title="Delete task"
-                    onClick={() => {
-                      setTasks(tasks.filter((_, i) => i !== idx));
-                    }}
+                    onClick={() => handleDeleteTask(idx)}
                   >
                     ×
                   </button>
@@ -358,6 +370,22 @@ export default function Home() {
             @keyframes slideDownPopup {
               from { transform: translateY(0) scale(1); opacity: 1; }
               to { transform: translateY(40px) scale(0.98); opacity: 0; }
+            }
+          `}</style>
+        </div>
+      )}
+
+      {/* Notification Toast */}
+      {notification && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#a97c50] text-white px-4 py-2 rounded shadow-lg z-[9999] transition-all animate-fadeIn">
+          {notification}
+          <style jsx global>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(20px);}
+              to { opacity: 1; transform: translateY(0);}
+            }
+            .animate-fadeIn {
+              animation: fadeIn 0.4s;
             }
           `}</style>
         </div>

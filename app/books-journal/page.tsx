@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { FaBook } from "react-icons/fa";
+import Image from "next/image"; // Import Next.js Image
 
 // LocalStorage helpers
 function loadFromStorage<T>(key: string, fallback: T): T {
@@ -220,10 +221,13 @@ export default function BooksJournal() {
                   style={{ position: "relative" }}
                 >
                   {book.cover ? (
-                    <img
+                    <Image
                       src={book.cover}
                       alt="Book cover"
+                      width={96}
+                      height={128}
                       className="w-full h-full object-cover"
+                      unoptimized // Needed for data URLs
                     />
                   ) : (
                     <FaBook className="text-4xl text-[#a97c50] group-hover:opacity-60 transition" />

@@ -47,6 +47,10 @@ export default function BooksJournal() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
+  // Add these states for the new book modal
+  const [showAddBook, setShowAddBook] = useState(false);
+  const [newBookTitle, setNewBookTitle] = useState("");
+
   // Save books to localStorage whenever they change
   useEffect(() => {
     saveToStorage("books", books);
@@ -124,6 +128,18 @@ export default function BooksJournal() {
     setJournalEntries(journalEntries.filter((_, i) => i !== idx));
   };
 
+  // Handler to add a new book
+  const handleAddBook = () => {
+    if (newBookTitle.trim()) {
+      setBooks([
+        ...books,
+        { title: newBookTitle.trim(), finished: false, rating: 0, cover: "" }
+      ]);
+      setNewBookTitle("");
+      setShowAddBook(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">
       {/* Header */}
@@ -137,6 +153,46 @@ export default function BooksJournal() {
         </div>
         <div className="w-full h-6 bg-white/60 rounded mb-2" /> {/* Search bar placeholder */}
       </header>
+
+      {/* Add Book Button */}
+      <div className="mb-6 flex justify-center">
+        <button
+          className="px-4 py-2 bg-[#a97c50] text-white rounded font-semibold hover:bg-[#8c653a] transition"
+          onClick={() => setShowAddBook(true)}
+        >
+          + Add New Book
+        </button>
+      </div>
+
+      {/* Add Book Modal */}
+      {showAddBook && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 shadow-lg min-w-[320px] max-w-[90vw]">
+            <h2 className="text-xl font-bold mb-4 text-[#a97c50]">Add a New Book</h2>
+            <input
+              type="text"
+              className="border rounded px-3 py-2 w-full mb-4"
+              placeholder="Book title..."
+              value={newBookTitle}
+              onChange={e => setNewBookTitle(e.target.value)}
+              autoFocus
+            />
+            <button
+              className="bg-[#a97c50] text-white px-4 py-2 rounded font-semibold hover:bg-[#8c653a] transition mb-4"
+              onClick={handleAddBook}
+              disabled={!newBookTitle.trim()}
+            >
+              Add Book
+            </button>
+            <button
+              className="mt-2 px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition"
+              onClick={() => setShowAddBook(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Search Bar */}
       <div className="w-full max-w-2xl mx-auto mb-8">

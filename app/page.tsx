@@ -72,6 +72,7 @@ export default function Home() {
   const [newClassName, setNewClassName] = useState("");
 
   const [popupClosing, setPopupClosing] = useState(false);
+  
 
   useEffect(() => {
     const interval = setInterval(() => setTimeParts(getTimeParts()), 1000 * 60);
@@ -100,7 +101,6 @@ export default function Home() {
 
   const handleViewDetails = (num: number) => {
     setSelectedClass(num);
-    setPopupVisible(true);
     setShowClassDetails(true);
     setPopupClosing(false);
   };
@@ -109,7 +109,6 @@ export default function Home() {
     setPopupClosing(true);
     setTimeout(() => {
       setShowClassDetails(false);
-      setPopupVisible(false);
       setSelectedClass(null);
       setPopupClosing(false);
     }, 300); // match animation duration

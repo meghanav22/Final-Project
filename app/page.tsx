@@ -117,24 +117,24 @@ export default function Home() {
   const { hours, minutes, ampm, day } = timeParts;
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 relative">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-4 md:p-6 relative">
       {/* Header */}
       <header className="flex flex-col items-center mb-6">
-        <div className="w-full h-20 bg-white/40 rounded-xl mb-2 flex items-center justify-between px-4 shadow">
+        <div className="w-full h-20 bg-white/40 rounded-xl mb-2 flex items-center justify-between px-2 md:px-4 shadow">
           <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center">
             <FaHome className="text-[#a97c50] text-2xl" />
           </div>
-          <h1 className="text-3xl font-bold tracking-wide">Home Page</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-wide text-center flex-1">Home Page</h1>
           <div className="w-10 h-10" /> {/* Spacer */}
         </div>
         <div className="w-full h-6 bg-white/60 rounded mb-2" /> {/* Search bar placeholder */}
       </header>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left Column */}
-        <div className="col-span-1 flex flex-col gap-6">
+        <div className="md:col-span-1 flex flex-col gap-6">
           {/* Time + Date */}
-          <section className="flex gap-2 items-end">
+          <section className="flex gap-2 items-end justify-center md:justify-start">
             <div className="bg-[#bfa76f] rounded-t-xl rounded-b-xl w-20 h-28 flex flex-col justify-between items-center shadow relative">
               <span className="text-white text-5xl font-bold mt-4">{hours}</span>
               <span className="text-white text-xs mb-2">{ampm}</span>
@@ -145,19 +145,19 @@ export default function Home() {
             </div>
           </section>
           {/* Quick Tasks & Notes */}
-          <section className="bg-[#f5efec] rounded-xl p-4 shadow">
+          <section className="bg-[#f5efec] rounded-xl p-3 md:p-4 shadow">
             <div className="flex items-center gap-2 mb-3">
-              <FaListUl className="text-[#a97c50] text-2xl" />
-              <span className="text-[#a97c50] font-bold text-xl">Quick tasks</span>
+              <FaListUl className="text-[#a97c50] text-xl md:text-2xl" />
+              <span className="text-[#a97c50] font-bold text-lg md:text-xl">Quick tasks</span>
             </div>
             <button
-              className="bg-white border border-[#a97c50] text-[#a97c50] rounded px-3 py-1 mb-3 font-medium hover:bg-[#f7e8d7] transition"
+              className="bg-white border border-[#a97c50] text-[#a97c50] rounded px-2 py-1 md:px-3 md:py-1 mb-3 font-medium hover:bg-[#f7e8d7] transition"
               onClick={() => setShowInput(true)}
             >
               New task
             </button>
             {showInput && (
-              <div className="mb-3 flex gap-2">
+              <div className="mb-3 flex gap-2 flex-col md:flex-row">
                 <input
                   type="text"
                   className="border rounded px-2 py-1 flex-1"
@@ -167,7 +167,7 @@ export default function Home() {
                   autoFocus
                 />
                 <button
-                  className="bg-[#a97c50] text-white px-3 py-1 rounded"
+                  className="bg-[#a97c50] text-white px-3 py-1 rounded mt-2 md:mt-0"
                   onClick={handleAddTask}
                 >
                   Add
@@ -176,9 +176,9 @@ export default function Home() {
             )}
             <ul className="space-y-3">
               {tasks.map((task, idx) => (
-                <li key={idx} className="flex items-center gap-2 text-lg">
+                <li key={idx} className="flex items-center gap-2 text-base md:text-lg">
                   <input type="checkbox" className="w-5 h-5 accent-[#a97c50]" />
-                  <span>{task}</span>
+                  <span className="flex-1">{task}</span>
                   <button
                     className="ml-2 text-red-500 hover:text-red-700 font-bold text-xl"
                     title="Delete task"
@@ -199,19 +199,19 @@ export default function Home() {
               alt="Barnes"
               width={400}
               height={220}
-              className="rounded-xl shadow object-cover"
+              className="rounded-xl shadow object-cover w-full max-w-xs md:max-w-md"
               priority={false}
             />
           </div>
         </div>
 
         {/* Center Column - Classes */}
-        <div className="col-span-1 flex flex-col items-center gap-6">
-          <span className="font-semibold text-3xl mb-2">Classes</span>
+        <div className="md:col-span-1 flex flex-col items-center gap-6 mt-8 md:mt-0">
+          <span className="font-semibold text-2xl md:text-3xl mb-2">Classes</span>
           {classNames.map((name, idx) => (
             <div
               key={idx}
-              className="w-[340px] bg-white/80 rounded-xl h-32 flex flex-col justify-between shadow text-xl font-medium px-8 py-6 relative mb-2"
+              className="w-full max-w-xs md:max-w-[340px] bg-white/80 rounded-xl h-32 flex flex-col justify-between shadow text-lg md:text-xl font-medium px-4 md:px-8 py-6 relative mb-2"
             >
               <div className="mb-2">
                 {editingClassIdx === idx ? (
@@ -253,7 +253,7 @@ export default function Home() {
                 )}
               </div>
               <button
-                className="self-start px-3 py-1 rounded border border-[#a97c50] text-[#a97c50] bg-transparent text-base font-semibold hover:bg-[#f5efec] transition"
+                className="self-start px-2 md:px-3 py-1 rounded border border-[#a97c50] text-[#a97c50] bg-transparent text-base font-semibold hover:bg-[#f5efec] transition"
                 onClick={() => handleViewDetails(idx + 1)}
               >
                 Details
@@ -263,13 +263,13 @@ export default function Home() {
         </div>
 
         {/* Right Column - Image */}
-        <div className="col-span-1 flex flex-col gap-6 justify-start items-center mt-[52px]">
+        <div className="md:col-span-1 flex flex-col gap-6 justify-start items-center mt-8 md:mt-[52px]">
           <Image
             src="/Final-Project/study-desk.jpg"
             alt="Study desk with notes, calculator, and laptop"
             width={250}
             height={80}
-            className="rounded-lg shadow"
+            className="rounded-lg shadow w-full max-w-xs md:max-w-[250px]"
             priority
           />
         </div>
@@ -278,8 +278,8 @@ export default function Home() {
       {/* Class Details Popup */}
       {showClassDetails && selectedClass !== null && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 shadow-lg min-w-[300px] max-w-[90vw]">
-            <h2 className="text-2xl font-bold mb-4 text-[#a97c50]">Class {selectedClass} Details</h2>
+          <div className="bg-white rounded-xl p-4 md:p-8 shadow-lg min-w-[260px] md:min-w-[300px] max-w-[95vw]">
+            <h2 className="text-xl md:text-2xl font-bold mb-4 text-[#a97c50]">Class {selectedClass} Details</h2>
             <label className="block mb-2 font-semibold text-[#a97c50]">Notes:</label>
             <textarea
               className="w-full border rounded p-2 mb-6"

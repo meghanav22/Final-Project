@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { FaListUl, FaHome } from "react-icons/fa";
 import Image from "next/image";
+import { Mirage } from "ldrs/react";
+import "ldrs/react/Mirage.css";
 
 function getTimeParts() {
   const now = new Date();
@@ -72,7 +74,7 @@ export default function Home() {
   const [newClassName, setNewClassName] = useState("");
 
   const [popupClosing, setPopupClosing] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => setTimeParts(getTimeParts()), 1000 * 60);
@@ -91,18 +93,34 @@ export default function Home() {
     saveToStorage("classDetails", classDetails);
   }, [classDetails]);
 
+  // Example: Show loader on refresh (mount)
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 800); // simulate loading
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Wrap any async action with loading
   const handleAddTask = () => {
     if (newTask.trim()) {
-      setTasks([...tasks, newTask.trim()]);
-      setNewTask("");
-      setShowInput(false);
+      setLoading(true);
+      setTimeout(() => {
+        setTasks([...tasks, newTask.trim()]);
+        setNewTask("");
+        setShowInput(false);
+        setLoading(false);
+      }, 600); // simulate loading
     }
   };
 
   const handleViewDetails = (num: number) => {
-    setSelectedClass(num);
-    setShowClassDetails(true);
-    setPopupClosing(false);
+    setLoading(true);
+    setTimeout(() => {
+      setSelectedClass(num);
+      setShowClassDetails(true);
+      setPopupClosing(false);
+      setLoading(false);
+    }, 600); // simulate loading
   };
 
   const handleCloseDetails = () => {
@@ -123,6 +141,15 @@ export default function Home() {
   };
 
   const { hours, minutes, ampm, day } = timeParts;
+
+  // Loader overlay
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-[999] flex items-center justify-center bg-white bg-opacity-70">
+        <Mirage size={60} speed={2.5} color="black" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-4 md:p-6 relative">

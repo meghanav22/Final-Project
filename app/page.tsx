@@ -71,7 +71,6 @@ export default function Home() {
   const [editingClassIdx, setEditingClassIdx] = useState<number | null>(null);
   const [newClassName, setNewClassName] = useState("");
 
-  const [popupVisible, setPopupVisible] = useState(false);
   const [popupClosing, setPopupClosing] = useState(false);
 
   useEffect(() => {

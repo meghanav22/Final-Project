@@ -209,15 +209,6 @@ export default function BooksJournal() {
         </div>
       )}
 
-      {/* Search Bar */}
-      <div className="w-full max-w-2xl mx-auto mb-8">
-        <input
-          type="text"
-          placeholder="Search books or journal..."
-          className="w-full border rounded-xl px-4 py-2 shadow"
-        />
-      </div>
-
       {/* Reading List */}
       <section className="mb-10">
         <h2 className="text-2xl font-semibold mb-4">Reading List</h2>

@@ -133,11 +133,13 @@ export default function BooksJournal() {
         ...journalEntries,
       ]);
       setJournalText("");
+      showNotification("Journal entry added!");
     }
   };
 
   const handleDeleteJournalEntry = (idx: number) => {
     setJournalEntries(journalEntries.filter((_, i) => i !== idx));
+    showNotification("Journal entry deleted!");
   };
 
   // Handler to add a new book

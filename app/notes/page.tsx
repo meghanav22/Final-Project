@@ -32,6 +32,8 @@ export default function NotesPage() {
   const [search, setSearch] = useState("");
   const [editingLabelIdx, setEditingLabelIdx] = useState<number | null>(null);
   const [newLabel, setNewLabel] = useState("");
+  const [showAddNote, setShowAddNote] = useState(false);
+  const [newNoteLabel, setNewNoteLabel] = useState("");
 
   const handleNoteChange = (idx: number, value: string) => {
     setNotes(notes =>
@@ -48,6 +50,14 @@ export default function NotesPage() {
   useEffect(() => {
     saveToStorage("notes", notes);
   }, [notes]);
+
+  const handleAddNoteSection = () => {
+    if (newNoteLabel.trim()) {
+      setNotes([...notes, { label: newNoteLabel.trim(), note: "" }]);
+      setNewNoteLabel("");
+      setShowAddNote(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 flex flex-col items-center justify-center">
@@ -93,6 +103,46 @@ export default function NotesPage() {
             priority
           />
         </div>
+
+        {/* Add Note Section Button */}
+        <div className="mb-6 flex justify-center w-full">
+          <button
+            className="px-4 py-2 bg-[#a97c50] text-white rounded font-semibold hover:bg-[#8c653a] transition"
+            onClick={() => setShowAddNote(true)}
+          >
+            + Add New Notes Section
+          </button>
+        </div>
+
+        {/* Add Note Modal */}
+        {showAddNote && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-8 shadow-lg min-w-[320px] max-w-[90vw]">
+              <h2 className="text-xl font-bold mb-4 text-[#a97c50]">Add a New Notes Section</h2>
+              <input
+                type="text"
+                className="border rounded px-3 py-2 w-full mb-4"
+                placeholder="Section label..."
+                value={newNoteLabel}
+                onChange={e => setNewNoteLabel(e.target.value)}
+                autoFocus
+              />
+              <button
+                className="bg-[#a97c50] text-white px-4 py-2 rounded font-semibold hover:bg-[#8c653a] transition mb-4"
+                onClick={handleAddNoteSection}
+                disabled={!newNoteLabel.trim()}
+              >
+                Add Section
+              </button>
+              <button
+                className="mt-2 px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition"
+                onClick={() => setShowAddNote(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Search Bar */}
         <div className="w-full max-w-2xl mx-auto mb-8">

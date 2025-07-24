@@ -73,6 +73,9 @@ export default function Home() {
   const [editingClassIdx, setEditingClassIdx] = useState<number | null>(null);
   const [newClassName, setNewClassName] = useState("");
 
+  const [showAddClass, setShowAddClass] = useState(false);
+  const [newClassInput, setNewClassInput] = useState("");
+
   const [popupClosing, setPopupClosing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
@@ -152,6 +155,17 @@ export default function Home() {
   const handleDeleteTask = (idx: number) => {
     setTasks(tasks.filter((_, i) => i !== idx));
     showNotification("Task deleted!");
+  };
+
+  // Handler to add a new class
+  const handleAddClass = () => {
+    if (newClassInput.trim()) {
+      setClassNames([...classNames, newClassInput.trim()]);
+      setClassDetails([...classDetails, { notes: "" }]);
+      setNewClassInput("");
+      setShowAddClass(false);
+      showNotification("Class added!");
+    }
   };
 
   const { hours, minutes, ampm, day } = timeParts;
@@ -255,6 +269,42 @@ export default function Home() {
         {/* Center Column - Classes */}
         <div className="md:col-span-1 flex flex-col items-center gap-6 mt-8 md:mt-0">
           <span className="font-semibold text-2xl md:text-3xl mb-2">Classes</span>
+          <div className="flex justify-center mb-4">
+            <button
+              className="px-4 py-2 bg-[#a97c50] text-white rounded font-semibold hover:bg-[#8c653a] transition"
+              onClick={() => setShowAddClass(true)}
+            >
+              + Add New Class
+            </button>
+          </div>
+          {showAddClass && (
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+              <div className="bg-white rounded-xl p-8 shadow-lg min-w-[320px] max-w-[90vw]">
+                <h2 className="text-xl font-bold mb-4 text-[#a97c50]">Add a New Class</h2>
+                <input
+                  type="text"
+                  className="border rounded px-3 py-2 w-full mb-4"
+                  placeholder="Class name..."
+                  value={newClassInput}
+                  onChange={e => setNewClassInput(e.target.value)}
+                  autoFocus
+                />
+                <button
+                  className="bg-[#a97c50] text-white px-4 py-2 rounded font-semibold hover:bg-[#8c653a] transition mb-4"
+                  onClick={handleAddClass}
+                  disabled={!newClassInput.trim()}
+                >
+                  Add Class
+                </button>
+                <button
+                  className="mt-2 px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition"
+                  onClick={() => setShowAddClass(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
           {classNames.map((name, idx) => (
             <div
               key={idx}

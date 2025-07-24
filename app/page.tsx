@@ -369,6 +369,20 @@ export default function Home() {
             className="rounded-lg shadow w-full max-w-xs md:max-w-[250px]"
             priority
           />
+          {/* Add books.jpg below with a nice card effect */}
+          <div className="w-full flex flex-col items-center">
+            <Image
+              src="/Final-Project/books.jpg"
+              alt="Books"
+              width={250}
+              height={120}
+              className="rounded-xl shadow-lg object-cover w-full max-w-xs md:max-w-[250px] mt-4 border-4 border-[#f5efec]"
+              style={{ boxShadow: "0 6px 24px 0 rgba(169,124,80,0.12)" }}
+            />
+            <span className="mt-2 text-[#a97c50] font-semibold text-base md:text-lg tracking-wide">
+              Inspiration for your reading journey
+            </span>
+          </div>
         </div>
       </div>
 

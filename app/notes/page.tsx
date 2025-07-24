@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaStickyNote } from "react-icons/fa";
 import Image from "next/image";
 
@@ -34,6 +34,14 @@ export default function NotesPage() {
   const [newLabel, setNewLabel] = useState("");
   const [showAddNote, setShowAddNote] = useState(false);
   const [newNoteLabel, setNewNoteLabel] = useState("");
+  const [notification, setNotification] = useState<string | null>(null);
+  const notificationTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const showNotification = (msg: string) => {
+    setNotification(msg);
+    if (notificationTimeout.current) clearTimeout(notificationTimeout.current);
+    notificationTimeout.current = setTimeout(() => setNotification(null), 1800);
+  };
 
   const handleNoteChange = (idx: number, value: string) => {
     setNotes(notes =>
@@ -56,12 +64,13 @@ export default function NotesPage() {
       setNotes([...notes, { label: newNoteLabel.trim(), note: "" }]);
       setNewNoteLabel("");
       setShowAddNote(false);
+      showNotification("Notes section added!");
     }
   };
 
-  // Add this handler:
   const handleDeleteNoteSection = (idx: number) => {
     setNotes(notes => notes.filter((_, i) => i !== idx));
+    showNotification("Notes section deleted!");
   };
 
   return (
@@ -225,6 +234,22 @@ export default function NotesPage() {
           ))}
         </div>
       </div>
+
+      {/* Notification Popup */}
+      {notification && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#a97c50] text-white px-4 py-2 rounded shadow-lg z-[9999] transition-all animate-fadeIn">
+          {notification}
+          <style jsx global>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(20px);}
+              to { opacity: 1; transform: translateY(0);}
+            }
+            .animate-fadeIn {
+              animation: fadeIn 0.4s;
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

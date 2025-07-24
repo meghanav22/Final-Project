@@ -59,6 +59,11 @@ export default function NotesPage() {
     }
   };
 
+  // Add this handler:
+  const handleDeleteNoteSection = (idx: number) => {
+    setNotes(notes => notes.filter((_, i) => i !== idx));
+  };
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans p-6 flex flex-col items-center justify-center">
       {/* Header - full width */}
@@ -161,6 +166,7 @@ export default function NotesPage() {
             <div key={idx} className="mb-6 w-full">
               <div className="flex items-center gap-2 mb-2">
                 {editingLabelIdx === idx ? (
+                  // ...existing edit form...
                   <form
                     onSubmit={e => {
                       e.preventDefault();
@@ -186,16 +192,26 @@ export default function NotesPage() {
                     />
                   </form>
                 ) : (
-                  <span
-                    className="font-bold text-lg cursor-pointer"
-                    onClick={() => {
-                      setEditingLabelIdx(idx);
-                      setNewLabel(note.label);
-                    }}
-                    title="Click to edit label"
-                  >
-                    {note.label}
-                  </span>
+                  <>
+                    <span
+                      className="font-bold text-lg cursor-pointer"
+                      onClick={() => {
+                        setEditingLabelIdx(idx);
+                        setNewLabel(note.label);
+                      }}
+                      title="Click to edit label"
+                    >
+                      {note.label}
+                    </span>
+                    {/* Delete button */}
+                    <button
+                      className="ml-2 text-red-500 hover:text-red-700 font-bold text-xl"
+                      title="Delete notes section"
+                      onClick={() => handleDeleteNoteSection(idx)}
+                    >
+                      ×
+                    </button>
+                  </>
                 )}
               </div>
               <textarea

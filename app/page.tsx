@@ -168,6 +168,13 @@ export default function Home() {
     }
   };
 
+  // Handler to delete a class
+  const handleDeleteClass = (idx: number) => {
+    setClassNames(classNames.filter((_, i) => i !== idx));
+    setClassDetails(classDetails.filter((_, i) => i !== idx));
+    showNotification("Class deleted!");
+  };
+
   const { hours, minutes, ampm, day } = timeParts;
 
   // Loader overlay
@@ -310,7 +317,7 @@ export default function Home() {
               key={idx}
               className="w-full max-w-xs md:max-w-[340px] bg-white/80 rounded-xl h-32 flex flex-col justify-between shadow text-lg md:text-xl font-medium px-4 md:px-8 py-6 relative mb-2"
             >
-              <div className="mb-2">
+              <div className="mb-2 flex items-center justify-between gap-2">
                 {editingClassIdx === idx ? (
                   <form
                     onSubmit={e => {
@@ -323,6 +330,7 @@ export default function Home() {
                       setEditingClassIdx(null);
                       setNewClassName("");
                     }}
+                    className="flex-1"
                   >
                     <input
                       type="text"
@@ -338,7 +346,7 @@ export default function Home() {
                   </form>
                 ) : (
                   <span
-                    className="font-semibold cursor-pointer"
+                    className="font-semibold cursor-pointer flex-1"
                     onClick={() => {
                       setEditingClassIdx(idx);
                       setNewClassName(classNames[idx]);
@@ -348,6 +356,14 @@ export default function Home() {
                     {name}
                   </span>
                 )}
+                {/* Delete class button */}
+                <button
+                  className="ml-2 text-red-500 hover:text-red-700 text-lg font-bold"
+                  title="Delete class"
+                  onClick={() => handleDeleteClass(idx)}
+                >
+                  ×
+                </button>
               </div>
               <button
                 className="self-start px-2 md:px-3 py-1 rounded border border-[#a97c50] text-[#a97c50] bg-transparent text-base font-semibold hover:bg-[#f5efec] transition"
@@ -369,19 +385,16 @@ export default function Home() {
             className="rounded-lg shadow w-full max-w-xs md:max-w-[250px]"
             priority
           />
-          {/* Add books.jpg below with a nice card effect */}
+          {/* books.jpg below, no border or caption */}
           <div className="w-full flex flex-col items-center">
             <Image
               src="/Final-Project/books.jpg"
               alt="Books"
               width={250}
               height={120}
-              className="rounded-xl shadow-lg object-cover w-full max-w-xs md:max-w-[250px] mt-4 border-4 border-[#f5efec]"
-              style={{ boxShadow: "0 6px 24px 0 rgba(169,124,80,0.12)" }}
+              className="rounded-xl shadow-lg object-cover w-full max-w-xs md:max-w-[250px] mt-4"
+              // Removed border and style, and removed caption
             />
-            <span className="mt-2 text-[#a97c50] font-semibold text-base md:text-lg tracking-wide">
-              Inspiration for your reading journey
-            </span>
           </div>
         </div>
       </div>
